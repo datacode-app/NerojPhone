@@ -1,0 +1,41 @@
+# Netlify configuration for NerojPhone Next.js monorepo deployment
+
+[build]
+  # Build command to run Turbo build for the web app
+  command = "turbo run build --filter @neroj/web"
+  
+  # Publish directory is where Next.js outputs the production build
+  publish = "apps/web/.next"
+  
+  # Use Node.js 22.x
+  [[build.environment]]
+    NODE_VERSION = "22.21.1"
+
+# Environment variables required for build
+# IMPORTANT: Set these in Netlify UI (Site Settings > Environment > Environment Variables)
+# DO NOT commit actual secrets to this file!
+# Required variables:
+# - NEXT_PUBLIC_SUPABASE_URL
+# - NEXT_PUBLIC_SUPABASE_ANON_KEY
+# - NEXT_PUBLIC_API_URL
+# - NEXT_PUBLIC_APP_NAME
+# - NEXT_PUBLIC_APP_URL
+
+# Redirect rules
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Function configuration (if using Netlify Functions)
+[functions]
+  node_bundler = "esbuild"
